@@ -61,44 +61,43 @@ gene_loss_full <- gene_loss_full[, !(colnames(gene_loss_full) %in% c("HLmyoViv2"
 gene_loss_full = gene_loss_full[rowMeans(gene_loss_full == "N") != 1,] # descard genes that were not found in all 77 bats
 genes_for_selection_screen = gene_loss_full[gene_loss_full$HLmyoViv5 %in% c("FI", "I", "UL") & gene_loss_full$HLnocLep2 %in% c("FI", "I", "UL"),] # prepare for selection screen
 genes_for_selection_screen = strsplit(rownames(genes_for_selection_screen),"#") %>% lapply(function(x) x[1]) %>% unlist # prepare for selection screen
-myoviv_L_intersection <- list(HLmyoViv1 = rownames(gene_loss_full[gene_loss_full$HLmyoViv1 == "L",]),
+
+myoviv_L_intersection <- list(HLmyoViv1 = rownames(gene_loss_full[gene_loss_full$HLmyoViv1 == "L",]), # list for an intersection for gene losses in both Myotis vivesi assemblies
                               HLmyoViv5 = rownames(gene_loss_full[gene_loss_full$HLmyoViv5 == "L",]))
+myoviv1_L_uniq_status_myoviv5 <- gene_loss_full[(gene_loss_full$HLmyoViv1 == "L") & (gene_loss_full$HLmyoViv5 != "L"),] # unique losses in short-read assembly
+myoviv5_L_uniq_status_myoviv1 <- gene_loss_full[(gene_loss_full$HLmyoViv5 == "L") & (gene_loss_full$HLmyoViv1 != "L"),] # unique losses in long-read assembly
 
-myoviv1_L_uniq_status_myoviv5 <- gene_loss_full[(gene_loss_full$HLmyoViv1 == "L") & (gene_loss_full$HLmyoViv5 != "L"),]
-myoviv5_L_uniq_status_myoviv1 <- gene_loss_full[(gene_loss_full$HLmyoViv5 == "L") & (gene_loss_full$HLmyoViv1 != "L"),]
-
-myoviv_L_UL_intersection <- list(HLmyoViv1 = rownames(gene_loss_full[gene_loss_full$HLmyoViv1 %in% c("L", "UL"),]),
+myoviv_L_UL_intersection <- list(HLmyoViv1 = rownames(gene_loss_full[gene_loss_full$HLmyoViv1 %in% c("L", "UL"),]), # list for an intersection for gene losses and uncertain losses in both Myotis vivesi assemblies
                                  HLmyoViv5 = rownames(gene_loss_full[gene_loss_full$HLmyoViv5 %in% c("L", "UL"),]))
-myoviv1_L_UL_uniq_status_myoviv5 <- gene_loss_full[(gene_loss_full$HLmyoViv1 %in% c("L", "UL")) & (gene_loss_full$HLmyoViv5 %notin% c("L", "UL")),]
-myoviv5_L_UL_uniq_status_myoviv1 <- gene_loss_full[(gene_loss_full$HLmyoViv5 %in% c("L", "UL")) & (gene_loss_full$HLmyoViv1 %notin% c("L", "UL")),]
+myoviv1_L_UL_uniq_status_myoviv5 <- gene_loss_full[(gene_loss_full$HLmyoViv1 %in% c("L", "UL")) & (gene_loss_full$HLmyoViv5 %notin% c("L", "UL")),] # unique losses and uncertain losses in short-read assembly
+myoviv5_L_UL_uniq_status_myoviv1 <- gene_loss_full[(gene_loss_full$HLmyoViv5 %in% c("L", "UL")) & (gene_loss_full$HLmyoViv1 %notin% c("L", "UL")),] # unique losses and uncertain losses in long-read assembly
 
-noclep_L_intersection <- list(HLnocLep1 = rownames(gene_loss_full[gene_loss_full$HLnocLep1 == "L",]),
+noclep_L_intersection <- list(HLnocLep1 = rownames(gene_loss_full[gene_loss_full$HLnocLep1 == "L",]), # list for an intersection for gene losses in both Noctilio leporinus assemblies
                               HLnocLep2 = rownames(gene_loss_full[gene_loss_full$HLnocLep2 == "L",]))
-noclep1_L_uniq_status_noclep2 <- gene_loss_full[(gene_loss_full$HLnocLep1 == "L") & (gene_loss_full$HLnocLep2 != "L"),]
-noclep2_L_uniq_status_noclep1 <- gene_loss_full[(gene_loss_full$HLnocLep2 == "L") & (gene_loss_full$HLnocLep1 != "L"),]
+noclep1_L_uniq_status_noclep2 <- gene_loss_full[(gene_loss_full$HLnocLep1 == "L") & (gene_loss_full$HLnocLep2 != "L"),] # unique losses in short-read assembly
+noclep2_L_uniq_status_noclep1 <- gene_loss_full[(gene_loss_full$HLnocLep2 == "L") & (gene_loss_full$HLnocLep1 != "L"),] # unique losses in long-read assembly
 
-noclep_L_UL_intersection <- list(HLnocLep1 = rownames(gene_loss_full[gene_loss_full$HLnocLep1 %in% c("L", "UL"),]),
+noclep_L_UL_intersection <- list(HLnocLep1 = rownames(gene_loss_full[gene_loss_full$HLnocLep1 %in% c("L", "UL"),]), # list for an intersection for gene losses and uncertain losses in both Noctilio leporinus assemblies
                                  HLnocLep2 = rownames(gene_loss_full[gene_loss_full$HLnocLep2 %in% c("L", "UL"),]))
-noclep1_L_UL_uniq_status_noclep2 <- gene_loss_full[(gene_loss_full$HLnocLep1 %in% c("L", "UL")) & (gene_loss_full$HLnocLep2 %notin% c("L", "UL")),]
-noclep2_L_UL_uniq_status_noclep1 <- gene_loss_full[(gene_loss_full$HLnocLep2 %in% c("L", "UL")) & (gene_loss_full$HLnocLep1 %notin% c("L", "UL")),]
+noclep1_L_UL_uniq_status_noclep2 <- gene_loss_full[(gene_loss_full$HLnocLep1 %in% c("L", "UL")) & (gene_loss_full$HLnocLep2 %notin% c("L", "UL")),] # unique losses and uncertain losses in short-read assembly
+noclep2_L_UL_uniq_status_noclep1 <- gene_loss_full[(gene_loss_full$HLnocLep2 %in% c("L", "UL")) & (gene_loss_full$HLnocLep1 %notin% c("L", "UL")),] # unique losses and uncertain losses in long-read assembly
 
 # 2D Venn diagram
-p1 <- ggVennDiagram(myoviv_L_intersection) + ggtitle("Myotis vivesi L") + coord_flip() + scale_x_continuous(expand = expansion(mult = .3))
+p1 <- ggVennDiagram(myoviv_L_intersection) + ggtitle("Myotis vivesi L") + coord_flip() + scale_x_continuous(expand = expansion(mult = .3)) # preparing plots for the overlaps and unique states
 p1_1 <- ggplot(myoviv1_L_uniq_status_myoviv5, aes(x=factor(HLmyoViv5)))+geom_bar(stat="count")+theme_minimal()+ggtitle("L HLmyoViv1 only")+xlab("state in HLmyoViv5")
 p1_2 <- ggplot(myoviv5_L_uniq_status_myoviv1, aes(x=factor(HLmyoViv1)))+geom_bar(stat="count")+theme_minimal()+ggtitle("L HLmyoViv5 only")+xlab("state in HLmyoViv1")
-p2 <- ggvenn(myoviv_L_UL_intersection, fill_color=c("darkblue", "darkgreen"), show_percentage = F, set_name_size = 10, text_size = 10)# + ggtitle("Myotis vivesi L and UL") + theme(plot.title = element_text(size = 20))
-# + coord_flip() + scale_x_continuous(expand = expansion(mult = .3)) 
+p2 <- ggvenn(myoviv_L_UL_intersection, fill_color=c("darkblue", "darkgreen"), show_percentage = F, set_name_size = 10, text_size = 10)
 p2_1 <- ggplot(myoviv1_L_UL_uniq_status_myoviv5, aes(x=factor(HLmyoViv5)))+geom_bar(stat="count")+theme_minimal()+ggtitle("L+UL HLmyoViv1 only")+xlab("state in HLmyoViv5")+theme(axis.text=element_text(size=14), axis.title=element_text(size=14), plot.title = element_text(size = 14))
 p2_2 <- ggplot(myoviv5_L_UL_uniq_status_myoviv1, aes(x=factor(HLmyoViv1)))+geom_bar(stat="count",)+theme_minimal()+ggtitle("L+UL HLmyoViv5 only")+xlab("state in HLmyoViv1")+theme(axis.text=element_text(size=14), axis.title=element_text(size=14), plot.title = element_text(size = 14))
 p3 <- ggVennDiagram(noclep_L_intersection) + ggtitle("Noctilio leporinus L") + coord_flip() + scale_x_continuous(expand = expansion(mult = .3))
 p3_1 <- ggplot(noclep1_L_uniq_status_noclep2, aes(x=factor(HLnocLep2)))+geom_bar(stat="count")+theme_minimal()+ggtitle("L HLnocLep1 only")+xlab("state in HLnocLep2")
 p3_2 <- ggplot(noclep2_L_uniq_status_noclep1, aes(x=factor(HLnocLep1)))+geom_bar(stat="count")+theme_minimal()+ggtitle("L HLnocLep2 only")+xlab("state in HLnocLep1")
-p4 <- ggvenn(noclep_L_UL_intersection, fill_color=c("darkblue", "darkgreen"), show_percentage = F, set_name_size = 10, text_size = 10) #+ ggtitle("Noctilio leporinus L and UL") + theme(plot.title = element_text(size = 20))
+p4 <- ggvenn(noclep_L_UL_intersection, fill_color=c("darkblue", "darkgreen"), show_percentage = F, set_name_size = 10, text_size = 10)
 p4_1 <- ggplot(noclep1_L_UL_uniq_status_noclep2, aes(x=factor(HLnocLep2)))+geom_bar(stat="count")+theme_minimal()+ggtitle("L+UL HLnocLep1 only")+xlab("state in HLnocLep2")+theme(axis.text=element_text(size=14), axis.title=element_text(size=14), plot.title = element_text(size = 14))
 p4_2 <- ggplot(noclep2_L_UL_uniq_status_noclep1, aes(x=factor(HLnocLep1)))+geom_bar(stat="count")+theme_minimal()+ggtitle("L+UL HLnocLep2 only")+xlab("state in HLnocLep1")+theme(axis.text=element_text(size=14), axis.title=element_text(size=14), plot.title = element_text(size = 14))
 
-ggarrange(p4, p2, nrow = 1)
-ggarrange(p4_1, p2_1, p4_2, p2_2, nrow = 2)
+ggarrange(p4, p2, nrow = 1) # plot the overlaps
+ggarrange(p4_1, p2_1, p4_2, p2_2, nrow = 2) # plot the unique states
 
 ### Myotis vivesi
 all_species = colnames(gene_loss_full)
