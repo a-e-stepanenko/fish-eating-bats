@@ -46,7 +46,7 @@ state.color = c("#d2dae1", "#6baed6", "#08519c", "black")
 renamed_tree <- rename_taxa(tree, data = synonyms_df, key = "old", value = "new")
 rownames(table_bats) = synonyms_df[synonyms_df$old %in% rownames(table_bats),]$new
 
-tree_for_plot = ggplot(renamed_tree, aes(color=tree$label)) + scale_color_manual(values=c("focus\nspecies"="#d1182a", "background"="#555555")) + 
+tree_for_plot = ggplot(renamed_tree, aes(color=tree$label)) + scale_color_manual(values=c("focus\nspecies"="#d1182a", "midground"="#d15500", "background"="#555555")) + 
   geom_tree() + theme_tree() + geom_tiplab(align=TRUE, fontface = "italic", size=7)
 gheatmap(tree_for_plot, table_bats, offset=18, width = 0.5, color = "black",, colnames_angle=90, hjust = 1) +
   scale_fill_continuous(name="Diet code", breaks = diet.states, high = "#132B43", low = "#56B1F7") +
