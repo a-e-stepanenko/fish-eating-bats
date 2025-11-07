@@ -22,18 +22,19 @@ library(wrapr)
 
 ## tree with diets
 setwd("/home/ana/Documents/loss")
-tree <- read.tree("tree21fam0.tree")
-table_bats <- read.csv("Yangochiroptera77.csv")
+tree <- read.tree("tree21fam0.tree") # Bat1K tree with all 103 bats in Newick format
+table_bats <- read.csv("Yangochiroptera77.csv") # table with assembly names, scientific bat names, and other information about assemblies
 synonyms_df <- data.frame(
   old = c(table_bats$Assembly),
   new = c(table_bats$ScientificName)
 )
 rownames(table_bats) = table_bats$Assembly
-tree <- drop.tip(tree, tree$tip.label[tree$tip.label %notin% c(rownames(table_bats), "hg38")])
-write.tree(tree, file='tree_for_selection_screen.tree')
-tree <- read.tree("Ariadna_21Famout_Yango77_noNA_nodelab.tre")
-tree$edge.length <- rep(1, length(tree$edge.length))
-tree$label = rep("background", nrow(tree$edge)+1)
+tree <- drop.tip(tree, tree$tip.label[tree$tip.label %notin% c(rownames(table_bats), "hg38")]) # filtering out non-Yangochiropteran bats
+write.tree(tree, file='tree_for_selection_screen.tree') # saving tree for the selection screen
+tree <- read.tree("Ariadna_21Famout_Yango77_noNA_nodelab.tre") # reading in a subset tree
+tree$edge.length <- rep(1, length(tree$edge.length)) # setting all edge lengths to 1
+tree$label = rep("background", nrow(tree$edge)+1) # labeling
+tree$label[MRCA(tree, "HLmyoDau2")] = tree$label[MRCA(tree, "HLmyoRic2")] = "midground"
 tree$label[MRCA(tree, "HLnocLep2")] = tree$label[MRCA(tree, "HLmyoViv5")] = "focus\nspecies"
 table_bats = table_bats[, c("Arthropods", "Blood", "Terrestrial.vertebrates", "Fish", "Leaves.and.flower.pieces", "Pollen.and.nectar", "Fruit")]
 table_bats = as.data.frame(table_bats)
