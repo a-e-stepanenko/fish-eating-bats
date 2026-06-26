@@ -1,7 +1,7 @@
 # fish-eating-bats
-This repository will contain the code I used in the fish-eating bats project
+This repository contains the code I used in the paper on the comparative genomics of fish-eating bats. 
 
-At first, the tables with the gene states and orthology were generated using following commands:
+Tables with the gene states and orthology classifications were generated using the following commands:
 
 ./make_gene_loss_status_table_with_genenames.py full_dirs_list.txt > lost_genes.txt
 
