@@ -2,47 +2,67 @@ library(RERconverge)
 library(pathview)
 library(ggplot2)
 
-tree_rer = "/home/ana/Documents/tree_for_selection_screen_t2_BL.tree"
+## only using bats
+table_bats <- read.csv("Yangochiroptera77.csv")
+
+###################################################################
+################### generate gene trees ############################
+tree_rer = "tree_for_selection_screen_t2_BL.tree"
 ali_files = "fg_srv_prank_ali"
-output = "est_phangorn_260426.txt"
-estimatePhangornTreeAll(alndir = ali_files, treefile = tree_rer, output.file = output, type = "DNA", submodel = "GTR")
 
-table_bats <- read.csv("Documents/loss/Yangochiroptera77.csv")
+library(parallel)
+# Run the tree estimation using 4 cores
+estimatePhangornTreeAll.function = function(x){
+  estimatePhangornTreeAll(alnfiles = paste0(ali_files, "/", list.files(ali_files)[x]),
+                          treefile = tree_rer, 
+                          output.file = paste0("outputs/output.", x), 
+                          type = "DNA", submodel = "GTR")
+}
+length(list.files(ali_files))
+mclapply(1:17018, estimatePhangornTreeAll.function, mc.cores = 4)
+# cat outputs/* > estimatePhangornTreeAll.txt
 
-treefile = readTrees("est_phangorn_260426.txt")
-names(treefile$lengths) <- gsub(".manual", "", names(treefile$lengths))
-names(treefile$trees) <- gsub(".manual", "", names(treefile$trees))
+###################################################################
+########################## run RERconverge ###################################
+treefile = readTrees("estimatePhangornTreeAll.txt", useSpecies = table_bats$Assembly)
+
+#Estimating relative evolutionary rates (RER) with getAllResiduals
 batRERw = getAllResiduals(treefile, useSpecies = table_bats$Assembly)
+saveRDS(batRERw, file="batRERw.rds")
+# batRERw = readRDS("batRERw.rds")
 
-fish_eaters <- c("HLnocLep2", "HLmyoViv5")
-par(mfrow=c(1,2))
-avgtree=plotTreeHighlightBranches(treefile$masterTree, outgroup="hg38",
-                                  hlspecies=fish_eaters, hlcols=c("red"),
-                                  main="Average tree") #plot average tree
-
-par(mfrow=c(1,1))
-phenvFish <- foreground2Paths(fish_eaters,treefile,clade="terminal", useSpecies = table_bats$Assembly)
-
-fish2d = foreground2Tree(fish_eaters, treefile, clade="all", weighted = TRUE)
-
-corFish=correlateWithBinaryPhenotype(batRERw, phenvFish, min.sp=10, min.pos=2,
-                                     weighted="auto")
-head(corFish[order(corFish$P),], 10)
-
-stats = getStat(corFish)
-names(stats) = sub(".*#", "", names(stats))
-annots = read.gmt("Documents/c2.cp.v2025.1.Hs.symbols.gmt")
+# Import Pathway Annotations
+# downloaded from https://data.broadinstitute.org/gsea-msigdb/msigdb/release/2025.1.Hs/
+## using the canonical pathways
+annots = read.gmt("c2.cp.v2025.1.Hs.symbols.gmt")
+# reformat
 annotslist = list(annots)
 names(annotslist) = "MSigDBpathways"
-enrichment = fastwilcoxGMTall(stats, annotslist,alternative = "two.sided", outputGeneVals = T, num.g = 10)
-head(enrichment)
 
-hist(corFish$P, breaks=15, xlab="Kendall P-value")
+fish_eaters_2 <- c("HLnocLep2", "HLmyoViv5")
+fish_eaters_4 <- c("HLnocLep2", "HLmyoViv5", "HLmyoRic2", "HLmyoDau2")
 
-enrich_df <- enrichment$MSigDBpathways
-top_enrich <- enrich_df[order(enrich_df$p.adj), ][1:20, ]
+for(i in c(2,4)){
+  #Generating paths using foreground2Paths which does not require a binary tree as input
+  phenvFish <- foreground2Paths(get(paste0("fish_eaters_", i)),
+                                useSpecies = table_bats$Assembly,
+                                treefile, clade="terminal")
+  assign(paste0("phenvFish_", i), phenvFish)
+  
+  #Correlating gene evolution with binary trait evolution, default no bootstrap
+  # default Kendall rank correlation coefficient, or Tau
+  corFish = correlateWithBinaryPhenotype(batRERw, phenvFish, min.sp=10, min.pos=2,  weighted="auto")
+  
+  # Calculates Rho-signed negative log-base-ten p-value for use in enrichment functions (NA removed)
+  stats = getStat(corFish)
+  corFish$stats = sapply(row.names(corFish), FUN=function(x){ stats[x] })
+  assign(paste0("corFish_", i), corFish)
+  
+  # enrichment 
+  names(stats) = sub(".*#", "", names(stats))
+  enrichment = fastwilcoxGMTall(stats, annotslist, alternative = "two.sided", outputGeneVals = T, num.g = 10)
+  assign(paste0("enrich_", i), enrichment$MSigDBpathways)
+  
+  rm(phenvFish, corFish, stats, enrichment)
+}
 
-ggplot(top_enrich, aes(x=reorder(rownames(top_enrich), log10(p.adj)), y=-log10(p.adj))) +
-  geom_bar(stat="identity", fill="dodgerblue") +
-  theme(axis.text.x=element_text(angle=90, hjust=1)) +
-  labs(x="Pathway", y="-log10(p.adj)", title="Top Pathway Enrichments")
