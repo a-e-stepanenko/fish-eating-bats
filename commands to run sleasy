@@ -1,3 +1,5 @@
+mamba activate sleasy
+
 ### aBSREL
 python3 /projects/hillerlab/genome/bin/scripts/sleasy/selection_screen.py \
 -toga2 ${TOGA2dir} \
