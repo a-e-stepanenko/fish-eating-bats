@@ -1,0 +1,24 @@
+### aBSREL
+python3 /projects/hillerlab/genome/bin/scripts/sleasy/selection_screen.py \
+-toga2 ${TOGA2dir} \
+-asm full_species.txt \
+-a prank \
+-it tree_for_selection_screen_t2_BL.nh \
+-ab srv \
+--twoBit_path hg38.sleasy.exons.2bit \
+-sb selected_transcripts.bed \
+--directory_name fg_mg_srv_prank \
+--do_manual_cleaning \
+--foreground_list 2FG.txt \
+-rs
+
+  
+### Relax
+python3 /projects/hillerlab/genome/bin/scripts/sleasy/selection_screen.py \
+--free_mode ${ali_folder} \
+--input_tree /projects/project-xyi/fishingBAT/tree_for_selection_screen_t2_BL.nh \
+--foreground_list 2FG.txt \
+--relax srv,10 \
+--do_screen_only --reference_name hg38 \
+--directory_name $output \
+--run_snakemake
