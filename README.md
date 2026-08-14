@@ -1,18 +1,19 @@
 # fish-eating-bats
 This repository contains code and scripts used in the paper on the comparative genomics of fish-eating bats (Stepanenko et al. link-to-add).
 
-Tables with the gene states and orthology classifications were generated using the following commands:
+**make_gene_loss_status_table_with_genenames.py** & **make_gene_dupl_status_table_with_genenames.py** 
+Extract gene states and orthology classifications based on TOGA2 (https://github.com/hillerlab/TOGA2) annotations. The scripts were run as: 
+make_gene_*_status_table_with_genenames.py full_dirs_sp_list.txt > genes.txt
 
-./make_gene_loss_status_table_with_genenames.py full_dirs_list.txt > lost_genes.txt
+**geme_losses_duplications.R** 
+Using the extracted tables from the above scripts and the phylogenetic tree, this script filters for genes lost or duplicated in the fishing bats whereas intact or not duplicated in the sister species and most of the non-fishing bats in the tree. See details in the methods of our paper.
 
-./make_gene_dupl_status_table_with_genenames.py full_dirs_list.txt > dupl_genes.txt
+**filter_for_transcripts.R**
+This script takes the output table from transcript_selection_table_TOGA2.py and filters for the longest and most complete transcripts for each gene. Then the selected transcripts were  processed by sleasy (https://github.com/casparbein/sleasy) to run Hyphy aBSREL (and RELAX for some of the genes, see details in the paper). Detailed settings of sleasy runs are in the script **sleasy_commands**.
 
-full_dirs_list.txt contains full paths to directories for TOGA2 outputs for all species in the tree.
+**selection_screen.R**
+This script?
 
-The outputs contain tables with gene and their states in all genomes from the list (lost_genes.txt), and gene orthology states relative to humann genes (dupl_genes.txt).  
+**mol_convergence.R** 
+These are the codes for running RERconverge (https://github.com/nclark-lab/RERconverge) using the same sleasy-generated transcript alignments ($transcript.manual.fa) for HyPhy runs and the phylogenetic tree. 
 
-geme_losses_duplications.R takes the tables from the previous step, the table with bat assembly names, scientific names, and diets, and the tree, and filters the lost and duplicated genes according to the methods.
-
-filter_for_transcripts.R filters the longest and most complete transcripts from all transcripts to then run the selection screen pipeline.
-
-mol_convergence.R needs a tree and a folder with the alignments of the genes across all species that have these genes, and performs molecular convergence analysis.
