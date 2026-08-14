@@ -1,5 +1,5 @@
 # fish-eating-bats
-This repository contains the code I used in the paper on the comparative genomics of fish-eating bats. 
+This repository contains code and scripts used in the paper on the comparative genomics of fish-eating bats (Stepanenko et al. link-to-add).
 
 Tables with the gene states and orthology classifications were generated using the following commands:
 
