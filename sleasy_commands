@@ -1,7 +1,7 @@
 mamba activate sleasy
 
 ### aBSREL
-python3 /projects/hillerlab/genome/bin/scripts/sleasy/selection_screen.py \
+python3 selection_screen.py \
 -toga2 ${TOGA2dir} \
 -asm full_species.txt \
 -a prank \
@@ -16,9 +16,9 @@ python3 /projects/hillerlab/genome/bin/scripts/sleasy/selection_screen.py \
 
   
 ### Relax
-python3 /projects/hillerlab/genome/bin/scripts/sleasy/selection_screen.py \
+python3 selection_screen.py \
 --free_mode ${ali_folder} \
---input_tree /projects/project-xyi/fishingBAT/tree_for_selection_screen_t2_BL.nh \
+--input_tree tree_for_selection_screen_t2_BL.nh \
 --foreground_list 2FG.txt \
 --relax srv,10 \
 --do_screen_only --reference_name hg38 \
