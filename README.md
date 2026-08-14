@@ -11,9 +11,6 @@ Using the extracted tables from the above scripts and the phylogenetic tree, thi
 **filter_for_transcripts.R**
 This script takes the output table from transcript_selection_table_TOGA2.py and filters for the longest and most complete transcripts for each gene. Then the selected transcripts were  processed by sleasy (https://github.com/casparbein/sleasy) to run Hyphy aBSREL (and RELAX for some of the genes, see details in the paper). Detailed settings of sleasy runs are in the script **sleasy_commands**.
 
-**selection_screen.R**
-This script?
-
 **mol_convergence.R** 
 These are the codes for running RERconverge (https://github.com/nclark-lab/RERconverge) using the same sleasy-generated transcript alignments ($transcript.manual.fa) for HyPhy runs and the phylogenetic tree. 
 
